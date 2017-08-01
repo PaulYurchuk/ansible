@@ -1,0 +1,8 @@
+- hosts: tomcat
+  
+  tasks:
+  - debug: var=ansible_processor_cores
+  - debug: var=ansible_hosthame
+  - debug: var=ansible_default_ipv4
+  - debug: var=ansible_memtotal_mb
+ 
