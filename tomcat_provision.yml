@@ -66,6 +66,9 @@
     become: true
     become_method: sudo
 
+  - name: Daemon reload 
+    shell: systemctl daemon-reload
+
   - name: Starting Tomcat server
     service: 
       name: tomcat
@@ -74,8 +77,18 @@
 
   - name: Checking tomcat service available by "shell" comand
     shell: ps -ef | grep tomcat
+    register: output
+  - debug: var=output
+    
+  - name: Checking tomcat service available by "shell" comand 
     shell: curl -IS {{tomcat_url}}
-    shell: systemctl status -l tomcat
+    register: output
+  - debug: var=output
+
+  - name: Checking tomcat service available by "shell" comand 
+    shell: systemctl status -l tomcat | grep active
+    register: output
+  - debug: var=output
     
   - name: Checking tomcat service available by "uri" module
     uri:
@@ -83,3 +96,8 @@
       url: http://localhost:8080
       return_content: yes
     register: webpage
+
+  - name: Tomcat is unavailable     
+    fail:
+      msg: 'Tomcat is not available wow'     
+    when: "'Tomcat' not in webpage.content"
