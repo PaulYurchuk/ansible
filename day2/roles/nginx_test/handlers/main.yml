@@ -1,0 +1,7 @@
+---
+# handlers file for nginx_test
+- name: Starting Nginx server...
+  service: 
+    name: nginx
+    state: started 
+    enabled: yes

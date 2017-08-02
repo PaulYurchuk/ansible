@@ -1,0 +1,41 @@
+- name: Installation
+  hosts: tomcat
+  become: yes
+  become_method: sudo
+  
+  pre_tasks:
+   - debug: msg="Lab Work Task. Web Server Provisioning"
+
+  roles:
+   - nginx
+   - tomcat
+   
+- name: Verification local
+  hosts: tomcat
+  become: yes
+  become_method: sudo
+
+  pre_tasks:
+   - debug: msg="Testing.. Stand by"
+
+  roles:
+   - java_test
+   - tomcat_test
+   - nginx_test
+   
+- name: Verification remote
+  hosts: localhost
+  
+  tasks:
+
+    - name: Check response from Tomcat service
+      uri:
+         url: http://192.168.56.10:80
+         return_content: yes
+      register: webpage
+
+    - name: Fail if tomcat is unreachable
+      assert:
+       that:
+        - "'Tomcat' in webpage.content"
+       msg: 'Fail Tomcat is not in the page content'

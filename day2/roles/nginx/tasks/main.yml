@@ -1,0 +1,17 @@
+---
+# tasks file for nginx
+- name: Installing the latest version of Nginx...
+  yum:
+    name: nginx
+    state: latest
+
+- name: Making proxy from port 80 to tomcat:8080 and starting service   
+  template: src=templates/nginx.conf.j2 dest=/etc/nginx/nginx.conf           
+  notify: 
+      restart_nginx
+
+- name: Starting Nginx server
+  service:  
+    name: nginx
+    enabled: yes
+    state: started

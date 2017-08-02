@@ -1,0 +1,39 @@
+---
+# tasks file for tomcat
+- name: Is the tomcat's group exists?
+  group:
+    name: tomcat_as_group
+    state: present
+      
+- name: Is the tomcat's user exists?
+  user:
+    name: tomcat_as
+    group: tomcat_as_group
+    home: /opt/tomcat/
+    state: present
+
+- name: Creating the CATALINA_HOME folder...
+  file:
+    path: /opt/tomcat/{{tomcat_version}}/
+    state: directory
+    recurse: yes
+    mode: 0775
+
+- name: Downloading Tomcat server...
+  get_url:
+    url:  http://archive.apache.org/dist/tomcat/tomcat-8/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}.tar.gz 
+    dest: /home/vagrant/
+
+- name: Unarchiving...
+  unarchive:
+    src:  /home/vagrant/apache-tomcat-{{tomcat_version}}.tar.gz 
+    dest: /home/vagrant/
+    remote_src: yes
+
+- name: Copy tomcat to /opt/tomcat/$version
+  shell: cp -R /home/vagrant/apache-tomcat-{{tomcat_version}}/* /opt/tomcat/{{tomcat_version}} && chown -R tomcat_as:tomcat_as_group /opt/tomcat/
+
+- name: Copy tomcat unit-file
+  template: src=tomcat.service.j2 dest=/etc/systemd/system/tomcat.service
+  notify: 
+      start_tomcat

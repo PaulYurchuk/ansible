@@ -1,0 +1,3 @@
+---
+# defaults file for nginx
+java_version: 1.8.0

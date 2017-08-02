@@ -1,0 +1,19 @@
+---
+# handlers file for tomcat_test
+# Systemd unit file for tomcat
+- name: Daemon reload 
+  shell: systemctl daemon-reload
+
+- name: Starting Tomcat server
+  service: 
+    name: tomcat
+    state: started 
+    enabled: yes
+
+- name: Copy tomcat.service file
+  copy:
+    src: /home/vagrant/tomcat.service
+    dest: /etc/systemd/system
+    remote_src: true
+  become: true
+  become_method: sudo
